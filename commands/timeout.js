@@ -1,4 +1,4 @@
-import { PermissionsBitField, SlashCommandBuilder } from "discord.js";
+import { PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 
 export const data = new SlashCommandBuilder()
     .setName('timeout')
@@ -6,19 +6,19 @@ export const data = new SlashCommandBuilder()
     .addUserOption((option) => 
         option
             .setName('username')
-            .setDescription('Enter the member who you want to to give timeout from the server')
+            .setDescription('Enter the member you want to give a timeout from the server')
             .setRequired(true),
     )
     .addNumberOption((option) => 
         option
             .setName('time')
-            .setDescription('Enter the time for timeout')
+            .setDescription('Enter the time for the timeout')
             .setRequired(true),
     )
     .addStringOption((option) => 
         option
             .setName('duration')
-            .setDescription('Duration for timeout')
+            .setDescription('Duration for the timeout')
             .setRequired(true)
             .addChoices(
                 {name: 'seconds', value: 'seconds'},
@@ -45,15 +45,20 @@ export async function execute(interaction) {
         return interaction.reply(`\`${userToBeTimeouted.tag}\` not found in the server.`);
     }
 
+    // Check if the invoking user has permission to moderate members
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.ModerateMembers)) {
+        return interaction.reply('You do not have permission to timeout members.');
+    }
+
     // Check if the bot can moderate the target user (roles and hierarchy check)
     if (member.roles.highest.position >= bot.roles.highest.position) {
         return interaction.reply(`I cannot timeout \`${userToBeTimeouted.tag}\` because they have a higher or equal role than me.`);
     }
 
-    // // Check if the member is already muted
-    // if (member.voice.serverMute) {
-    //     return interaction.reply(`\`${userToBeTimeouted.tag}\` is already muted.`);
-    // }
+    // Check if the invoking user has higher role than the target member
+    if (member.roles.highest.position >= interaction.member.roles.highest.position) {
+        return interaction.reply(`You cannot timeout \`${userToBeTimeouted.tag}\` because they have a higher or equal role than you.`);
+    }
 
     // Convert time to milliseconds based on the selected duration
     let timeoutDuration;

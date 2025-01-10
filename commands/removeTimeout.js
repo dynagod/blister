@@ -36,7 +36,7 @@ export async function execute(interaction) {
     }
 
     // Check if the member is currently in timeout
-    if (!(member.communicationDisabledUntil > Date.now())) {
+    if (!(member.communicationDisabledUntil && member.communicationDisabledUntil > Date.now())) {
         return interaction.reply(`\`${userToBeTimeouted.tag}\` is not currently in timeout.`);
     }
 

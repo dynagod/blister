@@ -1,4 +1,4 @@
-import { PermissionsBitField, SlashCommandBuilder } from "discord.js";
+import { PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 
 export const data = new SlashCommandBuilder()
     .setName('mute')
@@ -25,9 +25,19 @@ export async function execute(interaction) {
         return interaction.reply(`\`${userNeedToMute.tag}\` not found in the server.`);
     }
 
-    // Check if the bot can mute the target user (roles and hierarchy check)
+    // Check if the member invoking the command has permission to mute the target
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.MuteMembers)) {
+        return interaction.reply('You do not have permission to mute members.');
+    }
+
+    // Check if the member is above the bot in the role hierarchy
     if (member.roles.highest.position >= bot.roles.highest.position) {
         return interaction.reply(`I cannot mute \`${userNeedToMute.tag}\` because they have a higher or equal role than me.`);
+    }
+
+    // Check if the member is above the user invoking the command in the role hierarchy
+    if (member.roles.highest.position >= interaction.member.roles.highest.position) {
+        return interaction.reply(`You cannot mute \`${userNeedToMute.tag}\` because they have a higher or equal role than you.`);
     }
 
     // Try to fetch the member's voice state if they are in a channel

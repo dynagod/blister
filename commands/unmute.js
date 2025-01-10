@@ -1,4 +1,4 @@
-import { PermissionsBitField, SlashCommandBuilder } from "discord.js";
+import { PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 
 export const data = new SlashCommandBuilder()
     .setName('unmute')
@@ -23,6 +23,16 @@ export async function execute(interaction) {
     // Check if the member exists in the server
     if (!member) {
         return interaction.reply(`\`${userNeedToUnmute.tag}\` not found in the server.`);
+    }
+
+    // Check if the invoking user has permission to mute/unmute
+    if (!interaction.member.permissions.has(PermissionsBitField.Flags.MuteMembers)) {
+        return interaction.reply('You do not have permission to unmute members.');
+    }
+
+    // Check if the invoking user has higher role than the target member
+    if (member.roles.highest.position >= interaction.member.roles.highest.position) {
+        return interaction.reply(`You cannot unmute \`${userNeedToUnmute.tag}\` because they have a higher or equal role than you.`);
     }
 
     // Check if the bot can unmute the target user (roles and hierarchy check)
