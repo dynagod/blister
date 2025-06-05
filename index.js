@@ -2,7 +2,7 @@ import { Client, GatewayIntentBits, Collection } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
-import config from './config/config.js';
+import config from './config.js';
 
 // Get the current directory path
 const __filename = fileURLToPath(import.meta.url);
