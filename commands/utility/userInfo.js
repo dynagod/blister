@@ -1,12 +1,12 @@
-import { SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 
 export const data = new SlashCommandBuilder()
-    .setName('')
-    .setDescription('')
+    .setName('userinfo')
+    .setDescription('Displays user information')
     .addUserOption(option => 
         option
             .setName('target')
-            .setDescription('the user to get info about')
+            .setDescription('The user to get info about')
             .setRequired(false)
     );
 
