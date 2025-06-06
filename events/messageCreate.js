@@ -1,6 +1,7 @@
 import { CohereClient } from "cohere-ai";
 import config from "../config.js";
 import aiTalkManager from "../manager/aiTalkManager.js";
+import { AttachmentBuilder } from "discord.js";
 
 const cohere = new CohereClient({
   token: config.cohereKey,
@@ -29,7 +30,17 @@ export default (client) => {
         return;
       }
 
-      await message.channel.send(aiResponse);
+      if (reply.length > 2000) {
+        const buffer = Buffer.from(reply, 'utf-8');
+        const file = new AttachmentBuilder(buffer, { name: 'response.txt' });
+
+        await message.channel.send({
+          content: "📄 The response was too long, so I attached it as a file:",
+          files: [file],
+        });
+      } else {
+        await message.channel.send(reply);
+      }
     } catch (error) {
       console.error("AI talk error:", error);
       await message.channel.send("⚠️ Sorry, I couldn't generate a response right now.");
