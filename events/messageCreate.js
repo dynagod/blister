@@ -30,7 +30,7 @@ export default (client) => {
         return;
       }
 
-      if (reply.length > 2000) {
+      if (aiResponse.length > 2000) {
         const buffer = Buffer.from(reply, 'utf-8');
         const file = new AttachmentBuilder(buffer, { name: 'response.txt' });
 
@@ -39,7 +39,7 @@ export default (client) => {
           files: [file],
         });
       } else {
-        await message.channel.send(reply);
+        await message.channel.send(aiResponse);
       }
     } catch (error) {
       console.error("AI talk error:", error);
